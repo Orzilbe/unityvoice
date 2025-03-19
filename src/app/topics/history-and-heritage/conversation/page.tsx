@@ -18,14 +18,14 @@ export default function InterviewPractice() {
  const [isRecording, setIsRecording] = useState(false);
  const [mediaRecorder, setMediaRecorder] = useState(null);
  const [audioChunks, setAudioChunks] = useState([]);
-//  const [showProfile, setShowProfile] = useState(false);
- const [isBrowserCompatible, setIsBrowserCompatible] = useState(false);
+ // Removed commented out state variables that were causing lint errors
 
- useEffect(() => {
-   if (typeof window !== 'undefined' && navigator.mediaDevices?.getUserMedia) {
-     setIsBrowserCompatible(true);
-   }
- }, []);
+ // We don't need this effect if we're not using isBrowserCompatible
+ // useEffect(() => {
+ //   if (typeof window !== 'undefined' && navigator.mediaDevices?.getUserMedia) {
+ //     setIsBrowserCompatible(true);
+ //   }
+ // }, []);
 
  const startRecording = async () => {
   if (typeof window === 'undefined' || !navigator?.mediaDevices?.getUserMedia) {
@@ -36,7 +36,7 @@ export default function InterviewPractice() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ 
       audio: true,
-      video: false // וודא שאנחנו מבקשים רק הקלטת אודיו
+      video: false // Make sure we're only requesting audio recording
     });
     
     if (!stream) {
@@ -44,7 +44,7 @@ export default function InterviewPractice() {
     }
 
     const recorder = new MediaRecorder(stream, {
-      mimeType: 'audio/webm' // שימוש בפורמט נתמך
+      mimeType: 'audio/webm' // Use supported format
     });
     
     recorder.ondataavailable = (event) => {
@@ -56,7 +56,7 @@ export default function InterviewPractice() {
     setMediaRecorder(recorder);
     setIsRecording(true);
     setAudioChunks([]);
-    recorder.start(200); // הקלטה בקטעים של 200ms
+    recorder.start(200); // Record in 200ms chunks
   } catch (err) {
     console.error("Error:", err);
     alert("Please enable microphone access in your browser settings");
