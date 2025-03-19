@@ -10,7 +10,7 @@ export async function POST(request) {
   try {
     const { topic, count = 5 } = await request.json();
 
-    const prompt = `Generate ${count} military and warfare related words (like weapons, ranks, combat terms) in English with their Hebrew translations and example sentences. For each word provide:
+    const prompt = `Generate ${count} ${topic} in English with their Hebrew translations and example sentences. For each word provide:
     1. English word
     2. Hebrew translation with nikud
     3. Example sentence in English

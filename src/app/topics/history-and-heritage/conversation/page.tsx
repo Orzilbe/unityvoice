@@ -18,7 +18,7 @@ export default function InterviewPractice() {
  const [isRecording, setIsRecording] = useState(false);
  const [mediaRecorder, setMediaRecorder] = useState(null);
  const [audioChunks, setAudioChunks] = useState([]);
- const [showProfile, setShowProfile] = useState(false);
+//  const [showProfile, setShowProfile] = useState(false);
  const [isBrowserCompatible, setIsBrowserCompatible] = useState(false);
 
  useEffect(() => {
