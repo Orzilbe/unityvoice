@@ -16,7 +16,7 @@ interface FlashcardsProps {
   topic: string;
   userProfile: UserProfileData;
   onComplete?: () => void;
-  nextPageUrl?: string;
+  // nextPageUrl הוסר מכאן או הפך לאופציונלי אם אתה עדיין צריך אותו
 }
 
 const Flashcards: React.FC<FlashcardsProps> = ({ 
@@ -24,7 +24,7 @@ const Flashcards: React.FC<FlashcardsProps> = ({
   topic,
   userProfile,
   onComplete,
-  nextPageUrl = '/topics/security/quiz'
+  // nextPageUrl הוסר מכאן
 }) => {
   const [currentCard, setCurrentCard] = useState(0);
   const [showTranslation, setShowTranslation] = useState(false);

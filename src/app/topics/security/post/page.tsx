@@ -3,8 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import type { NextPage } from 'next';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { FaHeart, FaComment, FaShare, FaInfoCircle } from 'react-icons/fa';
+import { FaHeart, FaComment, FaShare } from 'react-icons/fa';
 import Image from 'next/image';
 
 interface Message {
@@ -14,22 +13,11 @@ interface Message {
 }
 
 const Page: NextPage = () => {
-  const router = useRouter();
   const [post, setPost] = useState('');
-  const [input, setInput] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
-  const [showProfile, setShowProfile] = useState(false);
-  const [commentCount, setCommentCount] = useState(0);
+  const [commentCount, setCommentCount] = useState(0); // השארנו את זה כי זה בשימוש בתצוגה
   const [metrics, setMetrics] = useState({ likes: 500, shares: 25 });
   const [isLiked, setIsLiked] = useState(false);
-
-  const userProfile = {
-    fullName: 'John Doe',
-    email: 'johndoe@example.com',
-    phoneNumber: '123-456-7890',
-    englishLevel: 'Intermediate',
-  };
 
   const requiredWords = ['Commander', 'Shield', 'Enemy', 'Tactics', 'Battlefield'];
 
@@ -56,7 +44,7 @@ const Page: NextPage = () => {
       likes: Math.floor(Math.random() * 1000 + 100),
       shares: Math.floor(Math.random() * 50 + 5),
     });
-  }, []);
+  }, [fetchDynamicPost]); // הוספנו את fetchDynamicPost למערך התלויות
 
   const handleLikeClick = () => {
     setIsLiked(!isLiked);

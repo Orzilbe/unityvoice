@@ -1,5 +1,5 @@
 'use client';
-
+//src/app/topics/security/conversation/page.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -9,6 +9,13 @@ interface ConversationMessage {
   content: string;
   feedback?: string;
 }
+
+// הוספת טיפוסים לזיהוי דיבור
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+}
+
+type SpeechRecognitionType = typeof window.SpeechRecognition | typeof window.webkitSpeechRecognition;
 
 const scenarios = [
   {
@@ -83,7 +90,7 @@ const Page = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedScenario, setSelectedScenario] = useState<typeof scenarios[0] | null>(null);
   
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognitionType | null>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
 
   const userProfile = {
@@ -93,30 +100,6 @@ const Page = () => {
     birthDate: '1990-01-01',
     englishLevel: 'Intermediate',
   };
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (SpeechRecognition) {
-        recognitionRef.current = new SpeechRecognition();
-        recognitionRef.current.continuous = true;
-        recognitionRef.current.interimResults = false;
-        recognitionRef.current.lang = 'en-US';
-
-        recognitionRef.current.onresult = async (event: any) => {
-          const lastResult = event.results[event.results.length - 1];
-          const transcript = lastResult[0].transcript;
-          handleUserResponse(transcript);
-        };
-      }
-
-      synthRef.current = window.speechSynthesis;
-    }
-
-    return () => {
-      stopConversation();
-    };
-  }, []);
 
   const handleUserResponse = async (transcript: string) => {
     setMessages(prev => [...prev, { type: 'user', content: transcript }]);
@@ -130,6 +113,30 @@ const Page = () => {
       console.error('Error processing response:', error);
     }
   };
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        recognitionRef.current = new SpeechRecognition();
+        recognitionRef.current.continuous = true;
+        recognitionRef.current.interimResults = false;
+        recognitionRef.current.lang = 'en-US';
+
+        recognitionRef.current.onresult = async (event: SpeechRecognitionEvent) => {
+          const lastResult = event.results[event.results.length - 1];
+          const transcript = lastResult[0].transcript;
+          handleUserResponse(transcript);
+        };
+      }
+
+      synthRef.current = window.speechSynthesis;
+    }
+
+    return () => {
+      stopConversation();
+    };
+  }, [handleUserResponse]); // הוספת התלות החסרה
 
   const analyzeResponse = async (userInput: string) => {
     try {

@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import Flashcards from '../../words/Refactored';
-import { Flashcard, UserProfileData } from '../../words/types';
+// import { Flashcard, UserProfileData } from '../../words/types';
 
 export default function FlashcardsPage() {
   const router = useRouter();
