@@ -1,4 +1,4 @@
-// app/api/generate-words/route.js
+// src/app/api/generate-words/route.js
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
@@ -8,6 +8,7 @@ const openai = new OpenAI({
 
 export async function POST(request) {
   try {
+    // Parse the request body
     const body = await request.json().catch(() => ({}));
     
     const topic = body.topic;
@@ -20,13 +21,27 @@ export async function POST(request) {
       );
     }
     
-    const wordCount = Math.min(Math.max(1, count), 20);
+    // מגביל את מספר המילים בין 5 ל-8
+    const wordCount = Math.min(Math.max(5, count), 8);
     
-    const prompt = `Generate ${wordCount} ${topic} words in English with their Hebrew translations and example sentences. For each word provide:
+    const prompt = `Generate ${wordCount} different ${topic} vocabulary words in English with their Hebrew translations and example sentences. For each word provide:
     1. English word
-    2. Hebrew translation with nikud
-    3. Example sentence in English
-    Format as JSON array with fields: word, translation, example`;
+    2. Hebrew translation with nikud (vowels)
+    3. Example sentence in English using the word in context
+
+    Use a variety of words related to ${topic} that would be useful for learning.
+    
+    Format your response as a valid JSON object with this EXACT structure:
+    {
+      "words": [
+        {
+          "word": "English word",
+          "translation": "Hebrew translation with nikud",
+          "example": "Example sentence in English."
+        },
+        ...more words...
+      ]
+    }`;
 
     const completion = await openai.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
@@ -38,8 +53,15 @@ export async function POST(request) {
     let result = [];
     try {
       const content = completion.choices[0]?.message?.content || '{"words":[]}';
+      console.log("OpenAI response:", content);
+      
       const parsedResponse = JSON.parse(content);
-      result = Array.isArray(parsedResponse) ? parsedResponse : (parsedResponse.words || []);
+      
+      if (!parsedResponse.words || !Array.isArray(parsedResponse.words)) {
+        throw new Error('Invalid response format from API');
+      }
+      
+      result = parsedResponse.words;
     } catch (parseError) {
       console.error('Error parsing OpenAI response:', parseError);
       return NextResponse.json(
@@ -49,8 +71,10 @@ export async function POST(request) {
     }
 
     const words = result.map((item, index) => ({
-      ...item,
       id: index,
+      word: item.word,
+      translation: item.translation,
+      example: item.example,
       difficulty: 'easy'
     }));
 
