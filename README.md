@@ -1,6 +1,4 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-### Play, Explore, and get Inspired!
 
 - add your OpenAi API key to the `.env` file
 
@@ -12,6 +10,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ```bash
   npm install
+  npm install lucide
+  
 ```
 
 - Run local development server with `npm run dev`
